@@ -10,14 +10,8 @@
         "phpunit/phpunit": "^9.4"
     },
     "autoload": {
-        "psr-4": {
-            "Overblog\\GraphQL\\Bundle\\ProfilerBundle\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Overblog\\GraphQL\\Bundle\\ProfilerBundle\\Tests\\": "tests/"
-        }
+        "psr-4": { "Overblog\\GraphQL\\Bundle\\ProfilerBundle\\": "" },
+        "exclude-from-classmap": ["/Tests/"]
     },
     "license": "MIT",
     "require": {

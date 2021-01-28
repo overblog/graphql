@@ -6,6 +6,7 @@ namespace Overblog\GraphQL\Bundle\ProfilerBundle\Controller;
 
 use GraphQL\Utils\SchemaPrinter;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;

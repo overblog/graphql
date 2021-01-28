@@ -1,0 +1,19 @@
+services:
+    Overblog\GraphQL\ProfilerBundle\Controller\ProfilerController:
+        public: true
+        arguments:
+            - "@profiler"
+            - "@twig"
+            - "@router"
+            - '@Overblog\GraphQLBundle\Request\Executor'
+            - "%overblog_graphql_profiler.query_match%"
+
+    Overblog\GraphQL\ProfilerBundle\DataCollector\GraphQLCollector:
+        public: false
+        tags:
+            - name: data_collector
+              template: "@GraphQLProfiler/panel.html.twig"
+              id: graphql
+            - name: kernel.event_listener
+              event: graphql.post_executor
+              method: onPostExecutor

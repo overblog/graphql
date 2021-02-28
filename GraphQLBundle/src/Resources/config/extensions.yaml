@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Overblog\GraphQLBundle\Extension\ExtensionRegistry:
+        arguments:
+            - !tagged_iterator "overblog_graphqL.extension"
+
+    ## BULT IN EXTENSIONS
+    Overblog\GraphQLBundle\Extension\Access\AccessExtension: ~
+    Overblog\GraphQLBundle\Extension\IsPublic\IsPublicExtension: ~
+    Overblog\GraphQLBundle\Extension\Complexity\ComplexityExtension: ~
+    Overblog\GraphQLBundle\Extension\Builder\BuilderExtension:
+        arguments:
+            - !tagged_iterator { tag: 'overblog_graphqL.extension_builder.builder', index_by: 'alias' }
+
+
+    ## BUILDERS REGISTRATION
+    Overblog\GraphQLBundle\Extension\Builder\Builder\RelayConnectionFieldsBuilder:
+        tags: 
+            - { name: "overblog_graphqL.extension_builder.builder", alias: "RelayConnection" }
+    
+    Overblog\GraphQLBundle\Extension\Builder\Builder\RelayEdgeFieldsBuilder:
+        tags: 
+            - { name: "overblog_graphqL.extension_builder.builder", alias: "RelayEdge" }
+
+    

@@ -1,0 +1,14 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        mappings:
+            auto_discover:
+                built_in: false
+
+overblog_graphql_configuration_yaml_xml:
+    yaml:
+        mapping:
+            directories:
+                - "%kernel.project_dir%/config/definition/mapping"

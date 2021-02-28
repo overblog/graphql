@@ -1,0 +1,22 @@
+RootMutation:
+    type: object
+    config:
+        fields:
+            simpleMutation:
+                builder: "Relay::Mutation"
+                builderConfig:
+                    inputType: simpleMutationInput
+                    payloadType: simpleMutationPayload
+                    mutateAndGetPayload: {result: 1}
+            simpleMutationWithThunkFields:
+                builder: "Relay::Mutation"
+                builderConfig:
+                    inputType: simpleMutationWithThunkFieldsInput
+                    payloadType: simpleMutationWithThunkFieldsPayload
+                    mutateAndGetPayload: "@=mutation('simple_mutation_with_thunk_fields', value)"
+            simplePromiseMutation:
+                builder: "Relay::Mutation"
+                builderConfig:
+                    inputType: simplePromiseMutationInput
+                    payloadType: simplePromiseMutationPayload
+                    mutateAndGetPayload: "@=mutation('simple_promise_mutation')"

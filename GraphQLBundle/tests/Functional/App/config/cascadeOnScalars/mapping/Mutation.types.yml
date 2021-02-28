@@ -1,0 +1,11 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            cascadeOnScalar:
+                type: Boolean
+                resolve: '@=m("mutation_mock", args, validator)'
+                args:
+                    test:
+                        type: "String"
+                        validation: cascade

@@ -1,0 +1,8 @@
+parameters:
+
+services:
+    Overblog\GraphQL\Bundle\ConfigurationGraphQLBundle\ConfigurationGraphQLParser:
+        arguments:
+            - '%graphql.configuration.directories.graphql%'
+        tags:
+            - { name: 'overblog_graphql.configuration.provider' }

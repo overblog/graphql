@@ -1,0 +1,22 @@
+imports:
+    - { resource: ../config.yml }
+    - { resource: services.yml }
+
+overblog_graphql:
+    errors_handler:
+        internal_error_message: "Mutation has failed."
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Mutation\\__DEFINITIONS__"
+        schema:
+            query: RootMutation
+            mutation: RootMutation
+        mappings:
+            types:
+                - type: yaml
+                  dir: "%kernel.project_dir%/config/mutation/mapping"
+
+overblog_graphql_configuration_yaml_xml:
+    yaml:
+        mapping:
+            directories:
+                - "%kernel.project_dir%/config/mutation/mapping"

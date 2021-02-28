@@ -1,0 +1,16 @@
+services:
+    Overblog\GraphQLBundle\ConfigurationProvider\ConfigurationProvider:
+        public: true
+        arguments:
+            - '@Symfony\Component\Validator\Validator\ValidatorInterface'
+            - '@Symfony\Contracts\EventDispatcher\EventDispatcherInterface'
+            - !tagged_iterator "overblog_graphql.configuration.provider"
+            - '@Overblog\GraphQLBundle\Extension\ExtensionRegistry'
+
+    Overblog\GraphQLBundle\Configuration\Configuration:
+        public: true
+        factory: ['@Overblog\GraphQLBundle\ConfigurationProvider\ConfigurationProvider', 'getConfiguration']
+    
+    Overblog\GraphQLBundle\ConfigurationProvider\Type\PageInfoConfiguration:
+        tags:
+            - { name: "overblog_graphql.configuration.provider", priority: 100 }

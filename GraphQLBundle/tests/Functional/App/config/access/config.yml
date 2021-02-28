@@ -1,0 +1,34 @@
+imports:
+    - { resource: ../config.yml }
+    - { resource: ../connection/services.yml }
+    - { resource: ../mutation/services.yml }
+
+overblog_graphql:
+    definitions:
+        use_classloader_listener: false
+        class_namespace: "Overblog\\GraphQLBundle\\Access\\__DEFINITIONS__"
+        schema:
+            query: RootQuery
+            mutation: RootMutation
+        mappings:
+            types:
+                - type: yaml
+                  dir: "%kernel.project_dir%/config/access/mapping"
+                # include the same files twice
+                - type: yaml
+                  dir: "%kernel.project_dir%/config/access/mapping"
+
+overblog_graphql_configuration_yaml_xml:
+    yaml:
+        mapping:
+            directories:
+                - "%kernel.project_dir%/config/access/mapping"
+                # include the same files twice
+                - "%kernel.project_dir%/config/access/mapping"
+
+services:
+    overblog_graphql.test.private:
+        class: Overblog\GraphQLBundle\Tests\Functional\App\Service\PrivateService
+        public: false
+        tags:
+            - { name: "overblog_graphql.service", alias: "private_service" }

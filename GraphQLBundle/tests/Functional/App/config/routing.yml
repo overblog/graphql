@@ -1,0 +1,5 @@
+overblog_graphql_endpoint:
+    resource: "@OverblogGraphQLBundle/Resources/config/routing/graphql.yml"
+
+_wdt:
+    path: /_wdt/{token}

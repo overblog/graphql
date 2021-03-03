@@ -132,3 +132,61 @@ We also need to move the old tests into their new bundle:
 We also need to come up with a solution to handle resolvers more properly (with Middlewares support).  
 Given the fact that resolvers must be set in configuration, the only way I can think of is a string like `ServiceName` or `ServiceName::MethodName`.  
 Like Symfony controllers at the end. 
+
+### Resolvers Middlewares
+
+The idea would be to implement resolvers middlewares, like Connect in Javascript.  
+A middleware could perform actions before or after the final resolver or interrupt the resolution chain.  
+It would receive a `$next` callback if there is more middleware in the chain.  
+For example, it could looks like that:  
+
+
+```php
+$executionTimeMiddleware = function($a, $b, $c, $next) {
+    $start = microtime(true);
+    return $next(function($res) {
+        $end = microtime(true);
+        $res['executionTime'] = $end - $start;
+
+        return $res;
+    });
+}
+
+$accessMiddleware = function ($a, $b, $c, $next) {
+    // Access ok, go to next middleware
+    if ($this->hasAccess()) {
+        return $next();
+    }
+
+    throw new \Exception("Access denied to this field");
+}
+
+
+$cacheMiddleware = function($a, $b, $c, $next) {
+    // Value in cache, return it
+    if ($this->inCache()) {
+        // Return cached value
+        return $this->getCache();
+    }
+
+    // Call next middleware (ie. resolver)
+    return $next(function($res) {
+        // Put result of the next middleware into the cache
+        $this->addCache($res);
+
+        $res['cached_at' => new \DateTime()];
+        return $res;
+    });
+}
+
+$resolver = function($a, $b, $c) {
+    return ['resolved' => 'value'];
+}
+```
+
+and we would use it like:
+
+```php
+$middlewareResolver = new MiddlewaresResolver($resolver, [$executionTimeMiddleware, $accessMiddleware, $cacheMiddleware]);
+$middlewareResolver->execute($a, $b, $c);
+```

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Configuration;
 
-class ScalarConfiguration extends TypeConfiguration
+use Closure;
+
+class ScalarConfiguration extends RootTypeConfiguration
 {
     protected ?string $scalarType = null;
 
-    protected ?string $serialize = null;
-    protected ?string $parseValue = null;
-    protected ?string $parseLiteral = null;
+    protected ?Closure $serialize = null;
+    protected ?Closure $parseValue = null;
+    protected ?Closure $parseLiteral = null;
 
     public function __construct(string $name)
     {
@@ -39,38 +41,38 @@ class ScalarConfiguration extends TypeConfiguration
         return $this;
     }
 
-    public function getSerialize(): ?string
+    public function getSerialize(): ?Closure
     {
         return $this->serialize;
     }
 
-    public function setSerialize(string $serialize): self
+    public function setSerialize(callable $serialize): self
     {
-        $this->serialize = $serialize;
+        $this->serialize = Closure::fromCallable($serialize);
 
         return $this;
     }
 
-    public function getParseValue(): ?string
+    public function getParseValue(): ?Closure
     {
         return $this->parseValue;
     }
 
-    public function setParseValue(string $parseValue): self
+    public function setParseValue(callable $parseValue): self
     {
-        $this->parseValue = $parseValue;
+        $this->parseValue = Closure::fromCallable($parseValue);
 
         return $this;
     }
 
-    public function getParseLiteral(): ?string
+    public function getParseLiteral(): ?Closure
     {
         return $this->parseLiteral;
     }
 
-    public function setParseLiteral(string $parseLiteral): self
+    public function setParseLiteral(callable $parseLiteral): self
     {
-        $this->parseLiteral = $parseLiteral;
+        $this->parseLiteral = Closure::fromCallable($parseLiteral);
 
         return $this;
     }
@@ -80,7 +82,6 @@ class ScalarConfiguration extends TypeConfiguration
         return array_filter([
             'name' => $this->name,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
             'scalarType' => $this->scalarType,
             'serialize' => $this->serialize,
             'parseValue' => $this->parseValue,

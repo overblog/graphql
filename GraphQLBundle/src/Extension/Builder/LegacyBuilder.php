@@ -88,19 +88,20 @@ class LegacyBuilder implements BuilderInterface
         if (is_string($mapping)) {
             $mapping = ['type' => $mapping];
         }
+        
         $fieldConfiguration = $field ?: FieldConfiguration::get($name, $mapping['type']);
 
         if (isset($mapping['type'])) {
             $fieldConfiguration->setType($mapping['type']);
         }
-        if (isset($mapping['resolver']) || isset($mapping['resolve'])) {
-            $fieldConfiguration->setResolver($mapping['resolver'] ?? $mapping['resolve']);
+        if (isset($mapping['resolve'])) {
+            $fieldConfiguration->setResolve($mapping['resolve']);
         }
         if (isset($mapping['description'])) {
             $fieldConfiguration->setDescription($mapping['description']);
         }
-        if (isset($mapping['deprecation']) || isset($mapping['deprecated'])) {
-            $fieldConfiguration->setDeprecation($mapping['deprecation'] ?? $mapping['deprecated']);
+        if (isset($mapping['deprecationReason'])) {
+            $fieldConfiguration->setDeprecationReason($mapping['deprecationReason']);
         }
         if (isset($mapping['args'])) {
             foreach ($mapping['args'] as $argName => $argMapping) {
@@ -122,9 +123,6 @@ class LegacyBuilder implements BuilderInterface
         }
         if (isset($mapping['description'])) {
             $argConfiguration->setDescription($mapping['description']);
-        }
-        if (isset($mapping['deprecation']) || isset($mapping['deprecatedReason'])) {
-            $argConfiguration->setDeprecation($mapping['deprecation'] ?? $mapping['deprecatedReason']);
         }
 
         return $argConfiguration;

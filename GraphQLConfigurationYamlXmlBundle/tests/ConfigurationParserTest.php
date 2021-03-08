@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Tests;
 
-use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\ConfigurationYamlParser;
+use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Tests\Inheritance\InheritanceTestTrait;
 use Overblog\GraphQLBundle\Configuration\Configuration;
 use Overblog\GraphQLBundle\Configuration\ObjectConfiguration;
 use SplFileInfo;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\Finder;
-use const DIRECTORY_SEPARATOR;
 
 abstract class ConfigurationParserTest extends WebTestCase
 {
@@ -65,7 +63,7 @@ abstract class ConfigurationParserTest extends WebTestCase
                 [
                     'name' => 'allObjects',
                     'type' => '[NodeInterface]',
-                    'resolver' => '@=service("overblog_graphql.test.resolver.global").resolveAllObjects()',
+                    'resolve' => '@=service("overblog_graphql.test.resolver.global").resolveAllObjects()',
                 ],
             ],
         ], $object->toArray());
@@ -92,15 +90,6 @@ abstract class ConfigurationParserTest extends WebTestCase
         $parser = new ConfigurationYamlParser([$dirname]);
         $actual = $parser->getConfiguration();
         $this->assertSame($expected, $actual);
-    }
-
-    public function testBrokenYaml(): void
-    {
-        $dirname = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'broken';
-        $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessageMatches('#The file "(.*)'.preg_quote(DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
-        $parser = new ConfigurationYamlParser([$dirname]);
-        $parser->getConfiguration();
     }
     */
 }

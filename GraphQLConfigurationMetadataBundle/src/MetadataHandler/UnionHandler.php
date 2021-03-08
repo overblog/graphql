@@ -38,7 +38,6 @@ class UnionHandler extends MetadataHandler
 
         $unionConfiguration = UnionConfiguration::get($gqlName)
             ->setDescription($this->getDescription($metadatas))
-            ->setDeprecation($this->getDeprecation($metadatas))
             ->addExtensions($this->getExtensions($metadatas))
             ->setOrigin($this->getOrigin($reflectionClass));
 
@@ -73,7 +72,7 @@ class UnionHandler extends MetadataHandler
                 throw new MetadataConfigurationException(sprintf('The metadata %s has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define one of them.', $this->formatMetadata('Union')));
             }
         }
-        $unionConfiguration->setTypeResolver($typeResolver);
+        $unionConfiguration->setResolveType($typeResolver);
 
         $configuration->addType($unionConfiguration);
 

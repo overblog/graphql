@@ -49,7 +49,6 @@ class InputFieldConfiguration extends TypeConfiguration
             'name' => $this->name,
             'type' => $this->type,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
             'extensions' => $this->getExtensionsArray(),
         ]);
 

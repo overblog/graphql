@@ -130,7 +130,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
         $this->assertEquals([
             'name' => 'Character',
             'description' => 'The character interface',
-            'typeResolver' => "@=resolver('character_type', [value])",
+            'resolveType' => "@=resolver('character_type', [value])",
             'fields' => [
                 [
                     'name' => 'name',
@@ -141,7 +141,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'friends',
                     'type' => '[Character]',
                     'description' => 'The friends of the character',
-                    'resolver' => "@=resolver('App\\MyResolver::getFriends')",
+                    'resolve' => "@=resolver('App\\MyResolver::getFriends')",
                 ],
             ],
         ], $interface->toArray());
@@ -168,7 +168,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'friends',
                     'type' => '[Character]',
                     'description' => 'The friends of the character',
-                    'resolver' => "@=resolver('App\\MyResolver::getFriends')",
+                    'resolve' => "@=resolver('App\\MyResolver::getFriends')",
                 ],
             ],
         ], $object->toArray());
@@ -186,11 +186,11 @@ abstract class ConfigurationMetadataTest extends WebTestCase
             'fields' => [
                 ['name' => 'memory', 'type' => 'Int!'],
                 ['name' => 'name', 'type' => 'String!', 'description' => 'The name of the character'],
-                ['name' => 'friends', 'type' => '[Character]', 'description' => 'The friends of the character', 'resolver' => "@=resolver('App\\MyResolver::getFriends')"],
+                ['name' => 'friends', 'type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
                 [
                     'name' => 'planet_allowedPlanets',
                     'type' => '[Planet]',
-                    'resolver' => '@=call(service(\'Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository\').getAllowedPlanetsForDroids, arguments({}, args))',
+                    'resolve' => '@=call(service(\'Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository\').getAllowedPlanetsForDroids, arguments({}, args))',
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'override_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -199,7 +199,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'planet_armorResistance',
                     'type' => 'Int!',
-                    'resolver' => '@=call(service(\'Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
+                    'resolve' => '@=call(service(\'Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -216,14 +216,14 @@ abstract class ConfigurationMetadataTest extends WebTestCase
             'name' => 'Sith',
             'description' => 'The Sith type',
             'interfaces' => ['Character'],
-            'fieldsResolver' => '@=value',
+            'resolveField' => '@=value',
             'fields' => [
                 ['name' => 'realName', 'type' => 'String!', 'extensions' => [['alias' => 'access', 'configuration' => "hasRole('SITH_LORD')"]]],
                 ['name' => 'location', 'type' => 'String!',  'extensions' => [['alias' => 'public', 'configuration' => "hasRole('SITH_LORD')"]]],
-                ['name' => 'currentMaster', 'type' => 'Sith', 'resolver' => "@=service('master_resolver').getMaster(value)"],
+                ['name' => 'currentMaster', 'type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
 
                 ['name' => 'name', 'type' => 'String!', 'description' => 'The name of the character'],
-                ['name' => 'friends', 'type' => '[Character]', 'description' => 'The friends of the character', 'resolver' => "@=resolver('App\\MyResolver::getFriends')"],
+                ['name' => 'friends', 'type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
 
                 [
                     'name' => 'victims',
@@ -231,7 +231,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'arguments' => [
                         ['name' => 'jediOnly', 'type' => 'Boolean', 'description' => 'Only Jedi victims', 'defaultValue' => false],
                     ],
-                    'resolver' => '@=call(value.getVictims, arguments({jediOnly: "Boolean"}, args))',
+                    'resolve' => '@=call(value.getVictims, arguments({jediOnly: "Boolean"}, args))',
                 ],
             ],
             'extensions' => [
@@ -261,7 +261,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'closestPlanet',
                     'type' => 'Planet',
-                    'resolver' => "@=resolver('closest_planet', [args['filter']])",
+                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
                     'extensions' => [
                         ['alias' => BuilderExtension::ALIAS, 'configuration' => ['name' => 'PlanetFilterArgBuilder', 'configuration' => ['option2' => 'value2']]],
                     ],
@@ -276,7 +276,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'closestPlanetDeprecated',
                     'type' => 'Planet',
-                    'resolver' => "@=resolver('closest_planet', [args['filter']])",
+                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
                     'extensions' => [
                         ['alias' => BuilderExtension::ALIAS, 'configuration' => ['name' => 'PlanetFilterArgBuilder', 'configuration' => ['option2' => 'value2']]],
                     ],
@@ -343,7 +343,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
         $this->assertEquals([
             'name' => 'WithArmor',
             'description' => 'The armored interface',
-            'typeResolver' => '@=resolver(\'character_type\', [value])',
+            'resolveType' => '@=resolver(\'character_type\', [value])',
             'extensions' => [
                 ['alias' => 'CustomExtension', 'configuration' => ['config1' => 12]],
             ],
@@ -359,7 +359,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
             'values' => [
                 ['name' => 'HUMAIN', 'value' => 1],
                 ['name' => 'CHISS', 'value' => '2', 'description' => 'The Chiss race'],
-                ['name' => 'ZABRAK', 'value' => '3', 'deprecation' => 'The Zabraks have been wiped out'],
+                ['name' => 'ZABRAK', 'value' => '3', 'deprecationReason' => 'The Zabraks have been wiped out'],
                 ['name' => 'TWILEK', 'value' => '4'],
             ],
         ], $interface->toArray());
@@ -372,14 +372,14 @@ abstract class ConfigurationMetadataTest extends WebTestCase
             'name' => 'ResultSearch',
             'description' => 'A search result',
             'types' => ['Hero', 'Droid', 'Sith'],
-            'typeResolver' => '@=value.getType()',
+            'resolveType' => '@=value.getType()',
         ], $union->toArray());
 
         $union = $this->getType('SearchResult2', UnionConfiguration::class);
         $this->assertEquals([
             'name' => 'SearchResult2',
             'types' => ['Hero', 'Droid', 'Sith'],
-            'typeResolver' => "@=call('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Union\\\\SearchResult2::resolveType', [service('overblog_graphql.type_resolver'), value], true)",
+            'resolveType' => "@=call('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Union\\\\SearchResult2::resolveType', [service('overblog_graphql.type_resolver'), value], true)",
         ], $union->toArray());
     }
 
@@ -389,7 +389,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
         $this->assertEquals([
             'name' => 'Killable',
             'types' => ['Hero', 'Mandalorian',  'Sith'],
-            'typeResolver' => '@=value.getType()',
+            'resolveType' => '@=value.getType()',
         ], $union->toArray());
     }
 
@@ -401,11 +401,11 @@ abstract class ConfigurationMetadataTest extends WebTestCase
             'interfaces' => ['Character', 'WithArmor'],
             'fields' => [
                 ['name' => 'name', 'type' => 'String!', 'description' => 'The name of the character'],
-                ['name' => 'friends', 'type' => '[Character]', 'description' => 'The friends of the character', 'resolver' => "@=resolver('App\\MyResolver::getFriends')"],
+                ['name' => 'friends', 'type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
                 [
                     'name' => 'planet_armorResistance',
                     'type' => 'Int!',
-                    'resolver' => '@=call(service(\'Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
+                    'resolve' => '@=call(service(\'Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -448,13 +448,13 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'countSecretWeapons',
                     'type' => 'Int!',
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\WeaponRepository').countSecretWeapons, arguments({}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\WeaponRepository').countSecretWeapons, arguments({}, args))",
                 ],
                 [
                     'name' => 'planet_searchPlanet',
                     'type' => '[Planet]',
                     'arguments' => [['name' => 'keyword', 'type' => 'String!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').searchPlanet, arguments({keyword: \"String!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').searchPlanet, arguments({keyword: \"String!\"}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -464,7 +464,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'planet_searchStar',
                     'type' => '[Planet]',
                     'arguments' => [['name' => 'distance', 'type' => 'Int!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').searchStar, arguments({distance: \"Int!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').searchStar, arguments({distance: \"Int!\"}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -474,7 +474,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'planet_isPlanetDestroyed',
                     'type' => 'Boolean!',
                     'arguments' => [['name' => 'planetId', 'type' => 'Int!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -494,7 +494,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'planet_createPlanet',
                     'type' => 'Planet',
                     'arguments' => [['name' => 'planetInput', 'type' => 'PlanetInput!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'extensions' => [
                         ['alias' => 'public', 'configuration' => 'override_public'],
                         ['alias' => 'access', 'configuration' => 'default_access'],
@@ -504,7 +504,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'planet_destroyPlanet',
                     'type' => 'Boolean!',
                     'arguments' => [['name' => 'planetId', 'type' => 'Int!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -523,12 +523,12 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'hasSecretWeapons',
                     'type' => 'Boolean!',
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\WeaponRepository').hasSecretWeapons, arguments({}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\WeaponRepository').hasSecretWeapons, arguments({}, args))",
                 ],
                 [
                     'name' => 'planet_getPlanetSchema2',
                     'type' => 'Planet',
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').getPlanetSchema2, arguments({}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').getPlanetSchema2, arguments({}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -538,7 +538,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'planet_isPlanetDestroyed',
                     'type' => 'Boolean!',
                     'arguments' => [['name' => 'planetId', 'type' => 'Int!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -554,13 +554,13 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'createLightsaber',
                     'type' => 'Boolean!',
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\WeaponRepository').createLightsaber, arguments({}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\WeaponRepository').createLightsaber, arguments({}, args))",
                 ],
                 [
                     'name' => 'planet_createPlanetSchema2',
                     'type' => 'Planet',
                     'arguments' => [['name' => 'planetInput', 'type' => 'PlanetInput!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').createPlanetSchema2, arguments({planetInput: \"PlanetInput!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').createPlanetSchema2, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'extensions' => [
                         ['alias' => 'public', 'configuration' => 'override_public'],
                         ['alias' => 'access', 'configuration' => 'default_access'],
@@ -570,7 +570,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     'name' => 'planet_destroyPlanet',
                     'type' => 'Boolean!',
                     'arguments' => [['name' => 'planetId', 'type' => 'Int!']],
-                    'resolver' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQL\\\\Bundle\\\\ConfigurationMetadataBundle\\\\Tests\\\\fixtures\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
                     'extensions' => [
                         ['alias' => 'access', 'configuration' => 'default_access'],
                         ['alias' => 'public', 'configuration' => 'default_public'],
@@ -595,7 +595,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                     ['name' => 'crystal', 'type' => 'Crystal!'],
                     ['name' => 'battles', 'type' => '[Battle]!'],
                     ['name' => 'currentHolder', 'type' => 'Hero'],
-                    ['name' => 'tags', 'type' => '[String]!', 'deprecation' => 'No more tags on lightsabers'],
+                    ['name' => 'tags', 'type' => '[String]!', 'deprecationReason' => 'No more tags on lightsabers'],
                     ['name' => 'float', 'type' => 'Float!'],
                     ['name' => 'decimal', 'type' => 'Float!'],
                     ['name' => 'bool', 'type' => 'Boolean!'],
@@ -613,9 +613,7 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                 [
                     'name' => 'planet',
                     'type' => 'Planet',
-                    'extensions' => [
-                        ['alias' => 'complexity', 'configuration' => '@=100 + childrenComplexity'],
-                    ],
+                    'complexity' => '100 + childrenComplexity'
                 ],
                 [
                     'name' => 'casualties',
@@ -630,10 +628,8 @@ abstract class ConfigurationMetadataTest extends WebTestCase
                         ['name' => 'away', 'type' => 'Boolean', 'defaultValue' => false],
                         ['name' => 'maxDistance', 'type' => 'Float'],
                     ],
-                    'resolver' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
-                    'extensions' => [
-                        ['alias' => 'complexity', 'configuration' => '@=childrenComplexity * 5'],
-                    ],
+                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
+                    'complexity' => 'childrenComplexity * 5'
                 ],
             ],
         ], $object->toArray());

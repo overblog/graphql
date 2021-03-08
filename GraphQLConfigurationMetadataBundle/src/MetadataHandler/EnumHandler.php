@@ -37,7 +37,6 @@ class EnumHandler extends MetadataHandler
 
         $enumConfiguration = EnumConfiguration::get($gqlName)
             ->setDescription($this->getDescription($metadatas))
-            ->setDeprecation($this->getDeprecation($metadatas))
             ->addExtensions($this->getExtensions($metadatas))
             ->setOrigin($this->getOrigin($reflectionClass));
 
@@ -50,7 +49,7 @@ class EnumHandler extends MetadataHandler
 
             $enumValueConfig = EnumValueConfiguration::get($name, $value)
                 ->setDescription($this->getDescription($valueMetadatas))
-                ->setDeprecation($this->getDeprecation($valueMetadatas))
+                ->setDeprecationReason($this->getDeprecation($valueMetadatas))
                 ->addExtensions($this->getExtensions($valueMetadatas))
                 ->setOrigin($this->getOrigin($reflectionConstant));
 
@@ -63,7 +62,7 @@ class EnumHandler extends MetadataHandler
                 }
 
                 if (isset($enumValueAnnotation->deprecationReason)) {
-                    $enumValueConfig->setDeprecation($enumValueAnnotation->deprecationReason);
+                    $enumValueConfig->setDeprecationReason($enumValueAnnotation->deprecationReason);
                 }
             }
 

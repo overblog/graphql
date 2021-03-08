@@ -6,6 +6,8 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Configuration\Configuration;
+use Overblog\GraphQLBundle\Configuration\RootTypeConfiguration;
+use Overblog\GraphQLBundle\Configuration\TypeConfiguration;
 use Overblog\GraphQLBundle\ConfigurationProvider\Processor;
 use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
 use Symfony\Component\Filesystem\Filesystem;
@@ -106,17 +108,19 @@ class TypeGenerator
 
         // Generate classes
         $classes = [];
-        foreach ($this->configuration->getTypes() as $type) {
+        foreach ($this->configuration->getTypes() as $typeConfiguration) {
             /*
             $config['config']['name'] ??= $name;
             $config['config']['class_name'] = $config['class_name'];
             */
+            /*
             $config = [
                 'name' => $type->getName(),
                 'type' => $type->getGraphQLType(),
                 'config' => $type->toArray() + ['class_name' => $type->getName().'Type.php'],
             ];
-            $classMap = $this->generateClass($config, $cacheDir, $mode);
+            */
+            $classMap = $this->generateClass($typeConfiguration, $cacheDir, $mode);
             $classes = array_merge($classes, $classMap);
         }
 
@@ -147,13 +151,13 @@ class TypeGenerator
         return $classes;
     }
 
-    public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
+    public function generateClass(RootTypeConfiguration $typeConfiguration, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
-        $className = $config['config']['class_name'];
+        $className = $typeConfiguration->getClassName();
         $path = "$outputDirectory/$className.php";
-
+        
         if (!($mode & self::MODE_MAPPING_ONLY)) {
-            $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
+            $phpFile = $this->typeBuilder->build($typeConfiguration);
 
             if ($mode & self::MODE_WRITE) {
                 if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Configuration;
 
+use Overblog\GraphQLBundle\Configuration\Traits\ClassNameTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class InputConfiguration extends TypeConfiguration
+class InputConfiguration extends RootTypeConfiguration
 {
     /**
      * @Assert\Valid
@@ -33,9 +34,18 @@ class InputConfiguration extends TypeConfiguration
     /**
      * @return InputFieldConfiguration[]
      */
-    public function getFields(): array
+    public function getFields(bool $indexedByName = false): array
     {
-        return $this->fields;
+        if (!$indexedByName) {
+            return $this->fields;
+        }
+
+        $fields = [];
+        foreach ($this->fields as $field) {
+            $fields[$field->getName()] = $field;
+        }
+        
+        return $fields;
     }
 
     /**
@@ -86,7 +96,6 @@ class InputConfiguration extends TypeConfiguration
         return array_filter([
             'name' => $this->name,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
             'fields' => array_map(fn (InputFieldConfiguration $field) => $field->toArray(), $this->fields),
             'extensions' => $this->getExtensionsArray(),
         ]);

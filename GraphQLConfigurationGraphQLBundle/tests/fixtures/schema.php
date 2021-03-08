@@ -54,7 +54,7 @@ return [
             ],
             [
                 'name' => 'JEDI',
-                'deprecation' => 'No longer supported',
+                'deprecationReason' => 'No longer supported',
                 'value' => 'JEDI',
             ],
         ],
@@ -68,7 +68,7 @@ return [
             ['name' => 'appearsIn', 'type' => '[Episode]!'],
             ['name' => 'deprecatedField',
                 'type' => 'String!',
-                'deprecation' => 'This field was deprecated!',
+                'deprecationReason' => 'This field was deprecated!',
             ],
         ],
     ], [

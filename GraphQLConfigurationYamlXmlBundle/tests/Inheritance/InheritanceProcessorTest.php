@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\ConfigurationProvider\Processor;
+namespace Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Tests\Inheritance;
 
 use InvalidArgumentException;
 use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Processor\InheritanceProcessor;

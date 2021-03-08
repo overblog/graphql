@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Configuration;
 
-use Overblog\GraphQLBundle\Configuration\Traits\TypeResolverTrait;
+use Overblog\GraphQLBundle\Configuration\Traits\ResolveTypeTrait;
 
-class UnionConfiguration extends TypeConfiguration
+class UnionConfiguration extends RootTypeConfiguration
 {
-    use TypeResolverTrait;
+    use ResolveTypeTrait;
 
     protected array $types = [];
 
@@ -56,8 +56,7 @@ class UnionConfiguration extends TypeConfiguration
         return array_filter([
             'name' => $this->name,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
-            'typeResolver' => $this->typeResolver,
+            'resolveType' => $this->resolveType,
             'types' => $this->types,
             'extensions' => $this->getExtensionsArray(),
         ]);

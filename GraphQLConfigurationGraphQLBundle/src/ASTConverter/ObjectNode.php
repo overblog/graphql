@@ -30,7 +30,6 @@ class ObjectNode implements NodeInterface
                 break;
         }
 
-        $configuration->setDeprecation(Deprecated::get($node));
         $configuration->setDescription(Description::get($node));
         $configuration->addExtensions(Extensions::get($node));
 

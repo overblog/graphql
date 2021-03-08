@@ -62,4 +62,32 @@ abstract class TypeConfiguration
     {
         return [];
     }
+
+    public function getChild(string $name): ?TypeConfiguration
+    {
+        foreach ($this->getChildren() as $child) {
+            if ($child->getName() === $name) {
+                return $child;
+            }
+        }
+
+        return null;
+    }
+
+    public function getParent(): ?TypeConfiguration
+    {
+        return null;
+    }
+
+    public function getPath(): string
+    {
+        $parent = $this;
+        $path = [];
+        while (null !== $parent) {
+            $path[] = $parent->getName();
+            $parent = $parent->getParent();
+        }
+
+        return join('.', $path);
+    }
 }

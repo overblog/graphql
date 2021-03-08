@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Configuration;
 
 use Overblog\GraphQLBundle\Configuration\Traits\FieldsTrait;
 
-class ObjectConfiguration extends TypeConfiguration
+class ObjectConfiguration extends RootTypeConfiguration
 {
     use FieldsTrait;
 
@@ -14,7 +14,7 @@ class ObjectConfiguration extends TypeConfiguration
     protected array $interfaces = [];
 
     protected ?string $isTypeOf = null;
-    protected ?string $fieldsResolver = null;
+    protected ?string $resolveField = null;
 
     public function __construct(string $name)
     {
@@ -63,14 +63,14 @@ class ObjectConfiguration extends TypeConfiguration
         return $this;
     }
 
-    public function getFieldsResolver(): ?string
+    public function getResolveField(): ?string
     {
-        return $this->fieldsResolver;
+        return $this->resolveField;
     }
 
-    public function setFieldsResolver(string $fieldsResolver): self
+    public function setResolveField(string $resolveField): self
     {
-        $this->fieldsResolver = $fieldsResolver;
+        $this->resolveField = $resolveField;
 
         return $this;
     }
@@ -80,10 +80,9 @@ class ObjectConfiguration extends TypeConfiguration
         return array_filter([
             'name' => $this->name,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
             'interfaces' => $this->interfaces,
             'isTypeOf' => $this->isTypeOf,
-            'fieldsResolver' => $this->fieldsResolver,
+            'resolveField' => $this->resolveField,
             'fields' => array_map(fn (FieldConfiguration $field) => $field->toArray(), $this->fields),
             'extensions' => $this->getExtensionsArray(),
         ]);

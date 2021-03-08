@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\Configuration\InputConfiguration;
 use Overblog\GraphQLBundle\Configuration\InputFieldConfiguration;
 use Overblog\GraphQLBundle\Configuration\InterfaceConfiguration;
 use Overblog\GraphQLBundle\Configuration\ObjectConfiguration;
+use Overblog\GraphQLBundle\Configuration\RootTypeConfiguration;
 use Overblog\GraphQLBundle\Configuration\ScalarConfiguration;
 use Overblog\GraphQLBundle\Configuration\TypeConfiguration;
 use Overblog\GraphQLBundle\Configuration\UnionConfiguration;
@@ -35,14 +36,8 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
 
     public function getConfiguration(): Configuration
     {
-        $files = $this->getFiles();
-        $config = [];
-        foreach ($files as $file) {
-            $config[] = $this->parseFile($file);
-        }
-
-        $config = (new Processor())->processConfiguration(new TypesConfiguration(), $config);
-
+        $config = $this->getConfigurationArray();
+        
         // Turns the array into a proper configuration object
         $configuration = new Configuration();
         foreach ($config as $name => $typeConfig) {
@@ -55,12 +50,25 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
         return $configuration;
     }
 
+    public function getConfigurationArray(): array
+    {
+        $files = $this->getFiles();
+        $config = [];
+        foreach ($files as $file) {
+            $config[] = $this->parseFile($file);
+        }
+
+        $config = [array_merge(...$config)];
+        
+        return (new Processor())->processConfiguration(new TypesConfiguration(), $config);
+    }
+
     /**
      * Transform a type array config into a proper TypeConfiguration
      *
-     * @return Overblog\GraphQLBundle\Configuration\TypeConfiguration|null
+     * @return Overblog\GraphQLBundle\Configuration\RootTypeConfiguration|null
      */
-    protected function configArrayToTypeConfiguration(string $name, array $typeConfig): ?TypeConfiguration
+    protected function configArrayToTypeConfiguration(string $name, array $typeConfig): ?RootTypeConfiguration
     {
         $config = $typeConfig['config'];
         $configType = $typeConfig['type'];
@@ -69,7 +77,7 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
             case TypesConfiguration::TYPE_INTERFACE:
                 $typeConfiguration = new InterfaceConfiguration($name);
                 if (isset($config['resolveType'])) {
-                    $typeConfiguration->setTypeResolver($config['resolveType']);
+                    $typeConfiguration->setResolveType($config['resolveType']);
                 }
                 // no break
             case TypesConfiguration::TYPE_OBJECT:
@@ -77,6 +85,10 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
                 if (TypesConfiguration::TYPE_OBJECT === $configType && count($config['interfaces']) > 0) {
                     $typeConfiguration->setInterfaces($config['interfaces']);
                 }
+                if (isset($config['resolveField'])) {
+                    $typeConfiguration->setResolveField($config['resolveField']);
+                }
+
                 if (isset($config['builders'])) {
                     foreach ($config['builders'] as $fieldsBuilder) {
                         $typeConfiguration->addExtension(new ExtensionConfiguration(BuilderExtension::ALIAS, [
@@ -89,7 +101,10 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
                     $fieldConfiguration = new FieldConfiguration($fieldName, $fieldConfig['type'] ?? '--replaced-by-builder--');
                     $this->setCommonProperties($fieldConfiguration, $fieldConfig);
                     if (isset($fieldConfig['resolve'])) {
-                        $fieldConfiguration->setResolver($fieldConfig['resolve']);
+                        $fieldConfiguration->setResolve($fieldConfig['resolve']);
+                    }
+                    if (isset($fieldConfig['complexity'])) {
+                        $fieldConfiguration->setComplexity($fieldConfig['complexity']);
                     }
                     if (isset($fieldConfig['args'])) {
                         foreach ($fieldConfig['args'] as $argName => $argConfig) {
@@ -159,7 +174,7 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
             case TypesConfiguration::TYPE_UNION:
                 $typeConfiguration = new UnionConfiguration($name);
                 $typeConfiguration->setTypes($config['types']);
-                $typeConfiguration->setTypeResolver($config['resolveType']);
+                $typeConfiguration->setResolveType($config['resolveType']);
                 break;
             default:
                 return null;
@@ -177,7 +192,7 @@ abstract class ConfigurationParser extends ConfigurationFilesParser
         }
 
         if (isset($config['deprecationReason'])) {
-            $typeConfiguration->setDeprecation($config['deprecationReason']);
+            $typeConfiguration->setDeprecationReason($config['deprecationReason']);
         }
 
         foreach ($config['extensions'] as $extension) {

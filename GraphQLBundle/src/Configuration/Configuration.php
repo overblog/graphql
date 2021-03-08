@@ -22,7 +22,7 @@ class Configuration
     /**
      * @Assert\Valid
      *
-     * @var TypeConfiguration[]
+     * @var RootTypeConfiguration[]
      */
     protected array $types = [];
 
@@ -34,7 +34,7 @@ class Configuration
     /**
      * @param string[] $gqlTypes
      *
-     * @return TypeConfiguration[]
+     * @return RootTypeConfiguration[]
      */
     public function getTypes(string ...$gqlTypes): array
     {
@@ -42,13 +42,13 @@ class Configuration
             return $this->types;
         }
 
-        return array_filter($this->types, fn (TypeConfiguration $type) => in_array($type->getGraphQLType(), $gqlTypes));
+        return array_filter($this->types, fn (RootTypeConfiguration $type) => in_array($type->getGraphQLType(), $gqlTypes));
     }
 
     /**
      * Retrieve latest type defined with given name
      */
-    public function getType(string $name): ?TypeConfiguration
+    public function getType(string $name): ?RootTypeConfiguration
     {
         foreach (array_reverse($this->types) as $type) {
             if ($type->getName() === $name) {
@@ -59,7 +59,24 @@ class Configuration
         return null;
     }
 
-    public function addType(TypeConfiguration $type): self
+    /**
+     * Retrieve a configuration based on path
+     */
+    public function get(string $path): ?TypeConfiguration
+    {
+        $tree = explode('.', $path);
+        $type = null;
+        foreach ($tree as $name) {
+            $type = null === $type ? $this->getType($name) : $type->getChild($name);
+            if (!$type) {
+                throw new Exception(\sprintf('Unable to retrieve configuration type at path "%s". "%s" does not exist.', $path, $name));
+            }
+        }
+
+        return $type;
+    }
+
+    public function addType(RootTypeConfiguration $type): self
     {
         // Type has already been added
         if (in_array($type, $this->types, true)) {
@@ -91,7 +108,7 @@ class Configuration
         return $this;
     }
 
-    public function removeType(TypeConfiguration $type)
+    public function removeType(RootTypeConfiguration $type)
     {
         $key = array_search($type, $this->types, true);
         if (false !== $key) {
@@ -270,6 +287,7 @@ class Configuration
         );
 
         foreach ($configurations as $configuration) {
+            /** @var ObjectConfiguration|InterfaceConfiguration|InputConfiguration $configuration */
             $fields = $configuration->getFields();
             if (0 === count($fields)) {
                 $message = sprintf('The %s "%s" has no field', $configuration->getGraphQLType(), $configuration->getName());

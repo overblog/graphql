@@ -62,8 +62,6 @@ class Field extends Metadata
      * Complexity expression.
      *
      * @var string
-     *
-     * @deprecated
      */
     public ?string $complexity;
 
@@ -103,10 +101,6 @@ class Field extends Metadata
 
         if (!empty($args)) {
             trigger_deprecation('overblog/graphql-bundle', '0.14', 'The attributes "args" on annotation @GQL\Field is deprecated as of 0.14 and will be removed in 1.0. Use the @Arg annotation on the property or method instead.');
-        }
-
-        if (null !== $complexity) {
-            trigger_deprecation('overblog/graphql-bundle', '0.14', 'The attributes "complexity" on annotation @GQL\Field is deprecated as of 0.14 and will be removed in 1.0. Use the Complexity Extension instead.');
         }
     }
 }

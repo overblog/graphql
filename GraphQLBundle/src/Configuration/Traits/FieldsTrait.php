@@ -16,9 +16,22 @@ trait FieldsTrait
      */
     protected array $fields = [];
 
-    public function getFields(): array
+    /**
+     * @param bool $indexedByName
+     * @return FieldConfiguration[]
+     */
+    public function getFields(bool $indexedByName = false): array
     {
-        return $this->fields;
+        if (!$indexedByName) {
+            return $this->fields;
+        }
+
+        $fields = [];
+        foreach ($this->fields as $field) {
+            $fields[$field->getName()] = $field;
+        }
+        
+        return $fields;
     }
 
     /**

@@ -88,8 +88,7 @@ class TypesConfiguration implements ConfigurationInterface
                 ->end()
                 ->cannotBeOverwritten()
                 ->children()
-                    ->scalarNode('class_name') // Devrait être géré globalement
-                        //->isRequired()
+                    ->scalarNode('class_name')
                         ->validate()
                             ->ifTrue(fn ($name) => !preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name))
                             ->thenInvalid('A valid class name starts with a letter or underscore, followed by any number of letters, numbers, or underscores.')
@@ -99,7 +98,7 @@ class TypesConfiguration implements ConfigurationInterface
                     ->arrayNode(InheritanceProcessor::INHERITS_KEY)
                         ->prototype('scalar')->info('Types to inherit of.')->end()
                     ->end()
-                    ->booleanNode('decorator')->info('Decorator will not be generated.')->defaultFalse()->end() // On ne les ajoute pas dans l'output
+                    ->booleanNode('decorator')->info('Decorator will not be generated.')->defaultFalse()->end()
                     ->append(Definition\ObjectTypeDefinition::create()->getDefinition())
                     ->append(Definition\EnumTypeDefinition::create()->getDefinition())
                     ->append(Definition\InterfaceTypeDefinition::create()->getDefinition())

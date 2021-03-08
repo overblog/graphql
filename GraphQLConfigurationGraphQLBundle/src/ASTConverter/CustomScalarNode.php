@@ -14,7 +14,6 @@ class CustomScalarNode implements NodeInterface
     public static function toConfiguration(string $name, Node $node): TypeConfiguration
     {
         $scalarConfiguration = ScalarConfiguration::get($name)
-            ->setDeprecation(Deprecated::get($node))
             ->setDescription(Description::get($node))
             ->addExtensions(Extensions::get($node));
 

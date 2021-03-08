@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Configuration;
 
 use Overblog\GraphQLBundle\Configuration\Traits\FieldsTrait;
-use Overblog\GraphQLBundle\Configuration\Traits\TypeResolverTrait;
+use Overblog\GraphQLBundle\Configuration\Traits\ResolveTypeTrait;
 
-class InterfaceConfiguration extends TypeConfiguration
+class InterfaceConfiguration extends RootTypeConfiguration
 {
-    use TypeResolverTrait;
+    use ResolveTypeTrait;
     use FieldsTrait;
 
     public function __construct(string $name)
@@ -32,8 +32,7 @@ class InterfaceConfiguration extends TypeConfiguration
         return array_filter([
             'name' => $this->name,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
-            'typeResolver' => $this->typeResolver,
+            'resolveType' => $this->resolveType,
             'fields' => array_map(fn (FieldConfiguration $field) => $field->toArray(), $this->fields),
             'extensions' => $this->getExtensionsArray(),
         ]);

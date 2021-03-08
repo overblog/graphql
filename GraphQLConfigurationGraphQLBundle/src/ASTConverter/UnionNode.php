@@ -13,7 +13,6 @@ class UnionNode implements NodeInterface
     public static function toConfiguration(string $name, Node $node): TypeConfiguration
     {
         $unionConfiguration = UnionConfiguration::get($name)
-            ->setDeprecation(Deprecated::get($node))
             ->setDescription(Description::get($node))
             ->addExtensions(Extensions::get($node));
 

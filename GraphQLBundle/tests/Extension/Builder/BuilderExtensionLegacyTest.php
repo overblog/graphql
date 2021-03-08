@@ -49,8 +49,7 @@ class LegacyArgsBuilder implements MappingInterface
             'arg1' => [
                 'type' => 'Int',
                 'defaultValue' => 3,
-                'description' => 'Arg description',
-                'deprecatedReason' => 'deprecated',
+                'description' => 'Arg description'
             ],
             'arg2' => 'String',
         ];
@@ -166,7 +165,6 @@ class BuilderExtensionLegacyTest extends TestCase
             'type' => 'Int',
             'defaultValue' => 3,
             'description' => 'Arg description',
-            'deprecation' => 'deprecated',
         ], $field->getArgument('arg1')->toArray());
         $this->assertEquals([
             'name' => 'arg2',

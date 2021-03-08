@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Configuration;
 
-class EnumConfiguration extends TypeConfiguration
+use Overblog\GraphQLBundle\Configuration\Traits\ClassNameTrait;
+
+class EnumConfiguration extends RootTypeConfiguration
 {
     /** @var EnumValueConfiguration[] */
     protected array $values;
@@ -48,9 +50,18 @@ class EnumConfiguration extends TypeConfiguration
     /**
      * @return EnumValueConfiguration[]
      */
-    public function getValues(): array
+    public function getValues(bool $indexedByName = false): array
     {
-        return $this->values;
+        if (!$indexedByName) {
+            return $this->values;
+        }
+
+        $values = [];
+        foreach ($this->values as $value) {
+            $values[$value->getName()] = $value;
+        }
+
+        return $values;
     }
 
     /**
@@ -66,7 +77,6 @@ class EnumConfiguration extends TypeConfiguration
         return array_filter([
             'name' => $this->name,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
             'values' => array_map(fn (EnumValueConfiguration $value) => $value->toArray(), $this->values),
             'extensions' => $this->getExtensionsArray(),
         ]);

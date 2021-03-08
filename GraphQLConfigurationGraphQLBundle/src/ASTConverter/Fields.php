@@ -32,11 +32,11 @@ class Fields
         if (!empty($node->$property)) {
             foreach ($node->$property as $definition) {
                 $configuration = $class::get($definition->name->value, Type::get($definition))
-                    ->setDeprecation(Deprecated::get($definition))
                     ->setDescription(Description::get($definition))
                     ->addExtensions(Extensions::get($definition));
 
                 if (self::TYPE_FIELDS === $type) {
+                    $configuration->setDeprecationReason(Deprecated::get($definition));
                     if (!empty($definition->arguments)) {
                         foreach (self::get($definition, self::TYPE_ARGUMENTS) as $argumentConfiguration) {
                             $configuration->addArgument($argumentConfiguration);

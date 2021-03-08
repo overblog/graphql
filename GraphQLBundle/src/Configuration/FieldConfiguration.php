@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Configuration;
 
+use Overblog\GraphQLBundle\Configuration\Traits\DeprecationTrait;
 use Overblog\GraphQLBundle\Configuration\Traits\TypeTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class FieldConfiguration extends TypeConfiguration
 {
     use TypeTrait;
+    use DeprecationTrait;
 
     /** @var ObjectConfiguration|InterfaceConfiguration */
     protected TypeConfiguration $parent;
@@ -19,19 +21,20 @@ class FieldConfiguration extends TypeConfiguration
      * @Assert\Valid
      */
     protected array $arguments = [];
+    protected $resolve = null;
+    protected ?string $complexity = null;
+    protected array $middlewares = [];
 
-    protected ?string $resolver;
-
-    public function __construct(string $name, string $type, string $resolver = null)
+    public function __construct(string $name, string $type, $resolve = null)
     {
         $this->name = $name;
         $this->type = $type;
-        $this->resolver = $resolver;
+        $this->resolve = $resolve;
     }
 
-    public static function get(string $name, string $type, string $resolver = null): FieldConfiguration
+    public static function get(string $name, string $type, string $resolve = null): FieldConfiguration
     {
-        return new static($name, $type, $resolver);
+        return new static($name, $type, $resolve);
     }
 
     public function getGraphQLType(): string
@@ -53,22 +56,42 @@ class FieldConfiguration extends TypeConfiguration
         return $this;
     }
 
-    public function getResolver(): ?string
+    public function getResolve()
     {
-        return $this->resolver;
+        return $this->resolve;
     }
 
-    public function setResolver(string $resolver): self
+    public function setResolve($resolve): self
     {
-        $this->resolver = $resolver;
+        $this->resolve = $resolve;
+
+        return $this;
+    }
+
+    public function getComplexity(): ?string
+    {
+        return $this->complexity;
+    }
+
+    public function setComplexity(string $complexity): self
+    {
+        $this->complexity = $complexity;
 
         return $this;
     }
 
     /** @return ArgumentConfiguration[] */
-    public function getArguments(): array
+    public function getArguments(bool $indexedByName = false): array
     {
-        return $this->arguments;
+        if (!$indexedByName) {
+            return $this->arguments;
+        }
+        $args = [];
+        foreach ($this->arguments as $argument) {
+            $args[$argument->getName()] = $argument;
+        }
+
+        return $args;
     }
 
     /**
@@ -104,14 +127,20 @@ class FieldConfiguration extends TypeConfiguration
         return $this->getArguments();
     }
 
+    public function getChild(string $name): ?ArgumentConfiguration
+    {
+        return $this->getArgument($name);
+    }
+
     public function toArray(): array
     {
         $array = array_filter([
             'name' => $this->name,
             'type' => $this->type,
             'description' => $this->description,
-            'deprecation' => $this->deprecation,
-            'resolver' => $this->resolver,
+            'deprecationReason' => $this->deprecationReason,
+            'complexity' => $this->complexity,
+            'resolve' => $this->resolve,
             'arguments' => array_map(fn (ArgumentConfiguration $argument) => $argument->toArray(), $this->arguments),
             'extensions' => $this->getExtensionsArray(),
         ]);

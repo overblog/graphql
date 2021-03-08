@@ -145,7 +145,7 @@ abstract class TypeDefinition
     protected function extensionsSection(): ArrayNodeDefinition
     {
         $node = self::createNode('extensions');
-
+        
         $prototype = $node->prototype('array');
 
         $prototype

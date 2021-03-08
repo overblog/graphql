@@ -25,7 +25,6 @@ class TypeGeneratorTest extends TestCase
         $typeBuilder = $this->createMock(TypeBuilder::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $configuration = $this->createMock(Configuration::class);
-        $configuration->expects($this->once())->method('getTypesConfiguration')->willReturn([]);
 
         $mask = (new TypeGenerator(
             'App', $cacheDir, $configuration, $typeBuilder, $eventDispatcher, true, null, $cacheDirMask
@@ -39,7 +38,6 @@ class TypeGeneratorTest extends TestCase
         $typeBuilder = $this->createMock(TypeBuilder::class);
         $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
         $configuration = $this->createMock(Configuration::class);
-        $configuration->expects($this->once())->method('getTypesConfiguration')->willReturn([]);
 
         $eventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(new SchemaCompiledEvent()));
 

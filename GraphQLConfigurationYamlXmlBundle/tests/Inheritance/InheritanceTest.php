@@ -2,32 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Functional\Inheritance;
+namespace Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Tests\Inheritance;
 
+use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\ConfigurationYamlParser;
 use Overblog\GraphQLBundle\Configuration\Configuration;
-use Overblog\GraphQLBundle\ConfigurationProvider\Processor\InheritanceProcessor;
-use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Processor\InheritanceProcessor;
 
-class InheritanceTest extends TestCase
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class InheritanceTest extends WebTestCase
 {
-    /** @var array */
-    private $config;
-
-    protected function setUp(): void
+    protected function getInheritanceConfiguration()
     {
-        parent::setUp();
+        $parser = new ConfigurationYamlParser([__DIR__.DIRECTORY_SEPARATOR.'../fixtures/inheritance']);
 
-        static::bootKernel(['test_case' => 'inheritance']);
-
-        /** @var Configuration $configuration */
-        $configuration = static::$kernel->getContainer()->get('Overblog\GraphQLBundle\Configuration\Configuration');
-
-        $this->config = (array) $configuration->getTypesConfiguration();
+        return $parser->getConfigurationArray();
     }
 
     public function testObjectInheritance(): void
     {
-        $this->assertArrayHasKey('Query', $this->config);
+        $config = $this->getInheritanceConfiguration();
+        
+        $this->assertArrayHasKey('Query', $config);
         // TODO(mcg-web): understand why travis fields order diffed from local test
         $this->assertEquals(
             [
@@ -52,13 +48,14 @@ class InheritanceTest extends TestCase
                     'builders' => [],
                 ],
             ],
-            $this->config['Query']
+            $config['Query']
         );
     }
 
     public function testEnumInheritance(): void
     {
-        $this->assertArrayHasKey('Period', $this->config);
+        $config = $this->getInheritanceConfiguration();
+        $this->assertArrayHasKey('Period', $config);
         $this->assertSame(
             [
                 'type' => 'enum',
@@ -74,13 +71,14 @@ class InheritanceTest extends TestCase
                     'name' => 'Period',
                 ],
             ],
-            $this->config['Period']
+            $config['Period']
         );
     }
 
     public function testRelayInheritance(): void
     {
-        $this->assertArrayHasKey('ChangeEventInput', $this->config);
+        $config = $this->getInheritanceConfiguration();
+        $this->assertArrayHasKey('ChangeEventInput', $config);
         $this->assertSame(
             [
                 'type' => 'input-object',
@@ -96,19 +94,21 @@ class InheritanceTest extends TestCase
                     ],
                 ],
             ],
-            $this->config['ChangeEventInput']
+            $config['ChangeEventInput']
         );
     }
 
     public function testDecoratorTypeShouldRemovedFromFinalConfig(): void
     {
-        $this->assertArrayNotHasKey('QueryBarDecorator', $this->config);
-        $this->assertArrayNotHasKey('QueryFooDecorator', $this->config);
+        $config = $this->getInheritanceConfiguration();
+        $this->assertArrayNotHasKey('QueryBarDecorator', $config);
+        $this->assertArrayNotHasKey('QueryFooDecorator', $config);
     }
 
     public function testDecoratorInterfacesShouldMerge(): void
     {
-        $this->assertArrayHasKey('ABCDE', $this->config);
+        $config = $this->getInheritanceConfiguration();
+        $this->assertArrayHasKey('ABCDE', $config);
         $this->assertSame(
             [
                 'type' => 'object',
@@ -141,7 +141,7 @@ class InheritanceTest extends TestCase
                     'builders' => [],
                 ],
             ],
-            $this->config['ABCDE']
+            $config['ABCDE']
         );
     }
 }

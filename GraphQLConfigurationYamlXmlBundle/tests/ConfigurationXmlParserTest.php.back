@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\Tests;
 
-use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\ConfigurationYamlParser;
+use Overblog\GraphQL\Bundle\ConfigurationYamlXmlBundle\ConfigurationXmlParser;
 
-class ConfigurationYamlParserTest extends ConfigurationParserTest
+class ConfigurationXmlParserTest extends ConfigurationParserTest
 {
-    const PARSER_CLASS = ConfigurationYamlParser::class;
+    const PARSER_CLASS = ConfigurationXmlParser::class;
     protected array $excludeDirectories = ['broken', 'constant'];
 
-    public function testBrokenYaml(): void
+    public function testBrokenXml(): void
     {
-        $dirname = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'broken'.DIRECTORY_SEPARATOR.'yaml';
+        $dirname = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'broken'.DIRECTORY_SEPARATOR.'xml';
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessageMatches('#The file "(.*)'.preg_quote(DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
-        $parser = new ConfigurationYamlParser([$dirname]);
+        $parser = new ConfigurationXmlParser([$dirname]);
         $parser->getConfiguration();
     }
 }

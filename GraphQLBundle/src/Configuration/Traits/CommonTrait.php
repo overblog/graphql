@@ -8,7 +8,6 @@ trait CommonTrait
 {
     use NameTrait;
     use DescriptionTrait;
-    use DeprecationTrait;
     use ExtensionTrait;
     use OriginTrait;
 }

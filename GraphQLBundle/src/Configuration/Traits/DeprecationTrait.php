@@ -6,17 +6,22 @@ namespace Overblog\GraphQLBundle\Configuration\Traits;
 
 trait DeprecationTrait
 {
-    protected ?string $deprecation = null;
+    protected ?string $deprecationReason = null;
 
-    public function getDeprecation(): ?string
+    public function getDeprecationReason(): ?string
     {
-        return $this->deprecation;
+        return $this->deprecationReason;
     }
 
-    public function setDeprecation(?string $deprecation): self
+    public function setDeprecationReason(?string $deprecationReason): self
     {
-        $this->deprecation = $deprecation;
+        $this->deprecationReason = $deprecationReason;
 
         return $this;
+    }
+
+    public function hasDeprecationReason(): bool
+    {
+        return $this->deprecationReason !== null;
     }
 }

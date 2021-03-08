@@ -32,7 +32,6 @@ class InterfaceHandler extends ObjectHandler
 
         $interfaceConfiguration = InterfaceConfiguration::get($gqlName)
             ->setDescription($this->getDescription($metadatas))
-            ->setDeprecation($this->getDeprecation($metadatas))
             ->addExtensions($this->getExtensions($metadatas))
             ->setOrigin($this->getOrigin($reflectionClass));
 
@@ -45,7 +44,7 @@ class InterfaceHandler extends ObjectHandler
         }
 
         if (isset($interfaceMetadata->typeResolver)) {
-            $interfaceConfiguration->setTypeResolver($this->formatExpression($interfaceMetadata->typeResolver));
+            $interfaceConfiguration->setResolveType($this->formatExpression($interfaceMetadata->typeResolver));
         }
 
         $configuration->addType($interfaceConfiguration);

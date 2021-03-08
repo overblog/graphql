@@ -11,7 +11,6 @@ services:
     ## BULT IN EXTENSIONS
     Overblog\GraphQLBundle\Extension\Access\AccessExtension: ~
     Overblog\GraphQLBundle\Extension\IsPublic\IsPublicExtension: ~
-    Overblog\GraphQLBundle\Extension\Complexity\ComplexityExtension: ~
     Overblog\GraphQLBundle\Extension\Builder\BuilderExtension:
         arguments:
             - !tagged_iterator { tag: 'overblog_graphqL.extension_builder.builder', index_by: 'alias' }

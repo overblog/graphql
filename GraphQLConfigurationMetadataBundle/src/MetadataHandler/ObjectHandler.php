@@ -14,7 +14,6 @@ use Overblog\GraphQLBundle\Configuration\FieldConfiguration;
 use Overblog\GraphQLBundle\Configuration\ObjectConfiguration;
 use Overblog\GraphQLBundle\Configuration\TypeConfiguration;
 use Overblog\GraphQLBundle\Extension\Builder\BuilderExtension;
-use Overblog\GraphQLBundle\Extension\Complexity\ComplexityExtension;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -56,7 +55,6 @@ class ObjectHandler extends MetadataHandler
 
         $objectConfiguration = ObjectConfiguration::get($gqlName)
             ->setDescription($this->getDescription($metadatas))
-            ->setDeprecation($this->getDeprecation($metadatas))
             ->setOrigin($this->getOrigin($reflectionClass));
 
         $currentValue = null !== $this->getOperationType($gqlName) ? sprintf("service('%s')", $this->formatNamespaceForExpression($reflectionClass->getName())) : 'value';
@@ -97,7 +95,7 @@ class ObjectHandler extends MetadataHandler
         }
 
         if (isset($typeMetadata->resolveField)) {
-            $objectConfiguration->setFieldsResolver($this->formatExpression($typeMetadata->resolveField));
+            $objectConfiguration->setResolveField($this->formatExpression($typeMetadata->resolveField));
         }
 
         $objectConfiguration->addExtensions($this->getExtensions($metadatas));
@@ -246,7 +244,7 @@ class ObjectHandler extends MetadataHandler
         $fieldName = $fieldMetadata->name ?? $reflector->getName();
         $fieldConfiguration = FieldConfiguration::get($fieldName, $type)
             ->setDescription($this->getDescription($metadatas))
-            ->setDeprecation($this->getDeprecation($metadatas))
+            ->setDeprecationReason($this->getDeprecation($metadatas))
             ->addExtensions($this->getExtensions($metadatas))
             ->setOrigin($this->getOrigin($reflector));
 
@@ -272,21 +270,25 @@ class ObjectHandler extends MetadataHandler
             $fieldConfiguration->addArgument($argumentConfiguration);
         }
 
-        $resolver = null;
+        $resolve = null;
         if (isset($fieldMetadata->resolve)) {
-            $resolver = $this->formatExpression($fieldMetadata->resolve);
+            $resolve = $this->formatExpression($fieldMetadata->resolve);
         } else {
             if ($reflector instanceof ReflectionMethod) {
-                $resolver = $this->formatExpression(sprintf('call(%s.%s, %s)', $currentValue, $reflector->getName(), $this->formatArgsForExpression($arguments)));
+                $resolve = $this->formatExpression(sprintf('call(%s.%s, %s)', $currentValue, $reflector->getName(), $this->formatArgsForExpression($arguments)));
             } else {
                 if ($fieldName !== $reflector->getName() || 'value' !== $currentValue) {
-                    $resolver = $this->formatExpression(sprintf('%s.%s', $currentValue, $reflector->getName()));
+                    $resolve = $this->formatExpression(sprintf('%s.%s', $currentValue, $reflector->getName()));
                 }
             }
         }
 
-        if (null !== $resolver) {
-            $fieldConfiguration->setResolver($resolver);
+        if (null !== $resolve) {
+            $fieldConfiguration->setResolve($resolve);
+        }
+
+        if (isset($fieldMetadata->complexity)) {
+            $fieldConfiguration->setComplexity($fieldMetadata->complexity);
         }
 
         /**  handle legacy args builders */
@@ -313,10 +315,6 @@ class ObjectHandler extends MetadataHandler
             } else {
                 throw new MetadataConfigurationException(sprintf('The attribute "fieldBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $this->formatMetadata($fieldMetadataName), $reflector->getName()));
             }
-        }
-
-        if (isset($fieldMetadata->complexity)) {
-            $fieldConfiguration->addExtension(ExtensionConfiguration::get(ComplexityExtension::ALIAS, $this->formatExpression($fieldMetadata->complexity)));
         }
 
         return $fieldConfiguration;

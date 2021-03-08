@@ -19,4 +19,9 @@ trait DescriptionTrait
 
         return $this;
     }
+
+    public function hasDescription(): bool
+    {
+        return $this->description !== null;
+    }
 }

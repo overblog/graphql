@@ -41,7 +41,6 @@ class InputHandler extends MetadataHandler
 
         $inputConfiguration = InputConfiguration::get($gqlName)
             ->setDescription($this->getDescription($metadatas))
-            ->setDeprecation($this->getDeprecation($metadatas))
             ->addExtensions($this->getExtensions($metadatas))
             ->setOrigin($this->getOrigin($reflectionClass));
 
@@ -100,7 +99,6 @@ class InputHandler extends MetadataHandler
 
             $fieldConfiguration = InputFieldConfiguration::get($reflector->getName(), $fieldType)
                 ->setDescription($this->getDescription($metadatas))
-                ->setDeprecation($this->getDeprecation($metadatas))
                 ->addExtensions($this->getExtensions($metadatas))
                 ->setOrigin($this->getOrigin($reflector));
 

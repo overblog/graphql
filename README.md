@@ -12,7 +12,7 @@ The parsers grouping is based on common features.
 What changed: 
     - All the inheritance stuff will now be part of the Yaml / Xml bundle
 
-
+prout
 So without shortcut, a Yaml configuration would look like that:
 ```yaml
 MyType:
